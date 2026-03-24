@@ -21,6 +21,26 @@ export default function ListProducts() {
         }
     }
 
+   async function deleteProduct(product: Product){
+        try{
+            const deleteUrl = url + "/" + product.id
+            await axios.delete(deleteUrl);
+            // console.log(response);
+            // if(response.status == 200){
+            //     fetchProducts();
+            // }
+            // await fetchProducts();
+            const copy_of_products = [...products];
+            const index = copy_of_products.findIndex(item => item.id === product.id);
+            copy_of_products.splice(index, 1);
+            setProducts(copy_of_products);
+
+        } catch(error){
+            alert("Failed to Delete")
+            console.log(error)
+        }
+    }
+
     useEffect(
         () => {
             fetchProducts();
@@ -38,7 +58,8 @@ export default function ListProducts() {
                             <p>Price: {product.price}</p>
                             <p>Desc: {product.description}</p>
                             <div>
-                                <button className="btn btn-warning">Delete</button>&nbsp;
+                                <button className="btn btn-warning" 
+                                onClick={() => {deleteProduct(product)}}>Delete</button>&nbsp;
                                 <button className="btn btn-info">Edit</button>
 
                             </div>
