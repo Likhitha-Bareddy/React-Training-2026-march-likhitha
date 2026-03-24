@@ -4,12 +4,14 @@ import { Product } from "@/models/Product";
 import axios from "axios";
 import { useEffect, useState } from "react"
 import styles from './products.module.css';
+import { useRouter } from "next/navigation";
 
 const url = "http://localhost:9000/products"
 
 export default function ListProducts() {
 
     const [products, setProducts] = useState<Product[]>([]);
+    const router = useRouter();
 
     async function fetchProducts() {
         try {
@@ -21,8 +23,8 @@ export default function ListProducts() {
         }
     }
 
-   async function deleteProduct(product: Product){
-        try{
+    async function deleteProduct(product: Product) {
+        try {
             const deleteUrl = url + "/" + product.id
             await axios.delete(deleteUrl);
             // console.log(response);
@@ -35,10 +37,14 @@ export default function ListProducts() {
             copy_of_products.splice(index, 1);
             setProducts(copy_of_products);
 
-        } catch(error){
+        } catch (error) {
             alert("Failed to Delete")
             console.log(error)
         }
+    }
+
+    async function editProduct(product: Product) {
+        router.push("/products/" + product.id);
     }
 
     useEffect(
@@ -49,7 +55,7 @@ export default function ListProducts() {
     return (
         <div>
             <h4>List Products</h4>
-            <div style={{display: "flex", flexFlow: "row wrap", justifyContent: "center" }}>
+            <div style={{ display: "flex", flexFlow: "row wrap", justifyContent: "center" }}>
                 {products.map(product => {
                     return (
                         <div className={styles.product} key={product.id}>
@@ -58,9 +64,10 @@ export default function ListProducts() {
                             <p>Price: {product.price}</p>
                             <p>Desc: {product.description}</p>
                             <div>
-                                <button className="btn btn-warning" 
-                                onClick={() => {deleteProduct(product)}}>Delete</button>&nbsp;
-                                <button className="btn btn-info">Edit</button>
+                                <button className="btn btn-warning"
+                                    onClick={() => { deleteProduct(product) }}>Delete</button>&nbsp;
+                                <button className="btn btn-info"
+                                    onClick={() => { editProduct(product) }}>Edit</button>
 
                             </div>
                         </div>
