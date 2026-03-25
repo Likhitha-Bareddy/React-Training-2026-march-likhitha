@@ -7,19 +7,25 @@ import styles from './products.module.css';
 import { useRouter } from "next/navigation";
 import { ProductView } from "./ProductView";
 import { useTitle } from "@/hooks/useTitle";
-import { useProducts } from "@/hooks/useProducts";
 
 const url = "http://localhost:9000/products"
 
 export default function ListProducts() {
 
+    const [products, setProducts] = useState<Product[]>([]);
     const [isMessageVisible, setMessageVisible] = useState(true);
     const router = useRouter();
     useTitle("List Products");
 
-    const {products, setProducts} = useProducts();
-
-
+    async function fetchProducts() {
+        try {
+            const response = await axios.get<Product[]>(url);
+            console.log(response);
+            setProducts(response.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const editProduct = useCallback((product: Product)=>{
          router.push("/products/" + product.id);
@@ -31,6 +37,11 @@ export default function ListProducts() {
         try {
             const deleteUrl = url + "/" + product.id
             await axios.delete(deleteUrl);
+            // console.log(response);
+            // if(response.status == 200){
+            //     fetchProducts();
+            // }
+            // await fetchProducts();
             const copy_of_products = [...products];
             const index = copy_of_products.findIndex(item => item.id === product.id);
             copy_of_products.splice(index, 1);
@@ -53,6 +64,34 @@ export default function ListProducts() {
         return total;
     }, [products])
 
+    // async function deleteProduct(product: Product) {
+    //     try {
+    //         const deleteUrl = url + "/" + product.id
+    //         await axios.delete(deleteUrl);
+    //         // console.log(response);
+    //         // if(response.status == 200){
+    //         //     fetchProducts();
+    //         // }
+    //         // await fetchProducts();
+    //         const copy_of_products = [...products];
+    //         const index = copy_of_products.findIndex(item => item.id === product.id);
+    //         copy_of_products.splice(index, 1);
+    //         setProducts(copy_of_products);
+
+    //     } catch (error) {
+    //         alert("Failed to Delete")
+    //         console.log(error)
+    //     }
+    // }
+
+    // async function editProduct(product: Product) {
+    //     router.push("/products/" + product.id);
+    // }
+
+    useEffect(
+        () => {
+            fetchProducts();
+        }, [])
 
     return (
         <div>
@@ -67,6 +106,20 @@ export default function ListProducts() {
                 {products.map(product => {
                     return (
                         <ProductView key={product.id} product={product} onDelete={deleteProduct} onEdit={editProduct}/>
+                        // <div className={styles.product} key={product.id}>
+                        //     <p>Id: {product.id}</p>
+                        //     <p>Name: {product.name}</p>
+                        //     <p>Price: {product.price}</p>
+                        //     <p>Desc: {product.description}</p>
+                        //     <div>
+                        //         <button className="btn btn-warning"
+                        //             onClick={() => { deleteProduct(product) }}>Delete</button>&nbsp;
+                        //         <button className="btn btn-info"
+                        //             onClick={() => { editProduct(product) }}>Edit</button>
+
+                        //     </div>
+                        // </div>
+
                     )
                 })}
             </div>
