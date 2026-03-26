@@ -1,6 +1,6 @@
 'use client'
 import { Supplier } from "@/models/Supplier";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function SuppliersPage(){
 
@@ -12,6 +12,10 @@ export default function SuppliersPage(){
         const suppliers = await response.json() as Supplier[];
         setSuppliers(suppliers);
     }
+
+    useEffect(() => {
+    fetchSuppliers("");
+}, []);
     // const suppliers = await fetchSuppliers();
     // console.log("Suppliers are: ", suppliers);
 
@@ -20,12 +24,7 @@ export default function SuppliersPage(){
     //  setSuppliers(await response.json() as Supplier[]);
  
     async function handleSearch(){
-        if(query){
-            const response = await fetch("http://localhost:3000/api/suppliers?q=" + query);
-            const suppliers = await response.json() as Supplier[];
-            setSuppliers(suppliers);
-        }
-
+        await fetchSuppliers(query);
     }
 
     return (
@@ -40,7 +39,7 @@ export default function SuppliersPage(){
           value={query} // The input value is controlled by React state
           // The state is updated on each change
         />
-         <button className="btn btn-primary"  onChange={handleSearch} >Search</button>
+         <button className="btn btn-primary"  onClick={handleSearch} >Search</button>
             
             </div> 
 
