@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AppBar from "@/components/AppBar";
 import ReduxProvider from "@/redux/ReduxProvider";
+import { AppThemeContextProvider } from "@/components/context/AppThemeContext";
 // import { Provider } from 'react-redux'
 // import { store } from '@/redux/store'
 
@@ -36,6 +37,7 @@ export default function RootLayout({
       <body>
         {/* <Provider store={store}> */}
         <ReduxProvider>
+          <AppThemeContextProvider>
           <div className="container">
             <AppBar />
             {/* Header */}
@@ -43,6 +45,7 @@ export default function RootLayout({
               {children}
             </main>
           </div>
+          </AppThemeContextProvider>
         </ReduxProvider>
         {/* </Provider> */}
       </body>
